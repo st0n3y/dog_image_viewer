@@ -7,7 +7,9 @@ const form = document.querySelector('form');
 // ------------------------------------------
 function fetchData(url) {
 	return fetch(url)
-		   	.then(res => res.json());
+			.then(checkStatus)
+		   	.then(res => res.json())
+			.catch(err => console.error("Looks like there was a problem!", err));
 }
 
 fetchData('https://dog.ceo/api/breeds/list')
@@ -48,6 +50,14 @@ function fetchBreedImage() {
 			img.alt = breed;
 			p.textContent = `Click to view more ${breed}s`
 		});
+}
+
+function checkStatus(response) {
+	if(response.ok) {
+		return Promise.resolve(response);
+	} else {
+		return Promise.reject(new Error(response.statusText));
+	}
 }
 
 
