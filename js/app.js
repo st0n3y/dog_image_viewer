@@ -12,12 +12,17 @@ function fetchData(url) {
 			.catch(err => console.error("Looks like there was a problem!", err));
 }
 
-fetchData('https://dog.ceo/api/breeds/list')
-	.then(data => generateOptions(data.message));
+Promise.all([
+	fetchData('https://dog.ceo/api/breeds/list'),
+	fetchData('https://dog.ceo/api/breeds/image/random')
+])
+.then(data => {
+	const breedList = data[0].message;
+	const randomImage = data[1].message;
 
-fetchData('https://dog.ceo/api/breeds/image/random')
-	.then(data => generateImage(data.message));
-
+	generateOptions(breedList);
+	generateImage(randomImage);
+});
 
 // ------------------------------------------
 //  HELPER FUNCTIONS
@@ -48,7 +53,7 @@ function fetchBreedImage() {
 		.then(data => {
 			img.src = data.message;
 			img.alt = breed;
-			p.textContent = `Click to view more ${breed}s`
+			p.textContent = `Click to view more ${breed.replace(/^\w/, c => c.toUpperCase())}s`
 		});
 }
 
